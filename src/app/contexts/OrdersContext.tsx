@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import { storage, Order, OrderItem } from '../lib/storage';
+import { storage, Order } from '../lib/storage';
 
 // Orders Context
 interface OrdersState {

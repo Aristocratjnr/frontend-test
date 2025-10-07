@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Search } from 'lucide-react';
 
@@ -10,6 +10,33 @@ interface SearchResult {
   type: 'product' | 'order' | 'report';
   description: string;
   url: string;
+}
+
+interface ProductData {
+  id: string;
+  name: string;
+  price: string;
+  rating: number;
+  category: string;
+  description: string;
+}
+
+interface OrderData {
+  id: string;
+  customer: string;
+  products: string;
+  price: string;
+  delivery: string;
+  date: string;
+  status: string;
+}
+
+interface ReportData {
+  id: string;
+  title: string;
+  type: string;
+  date: string;
+  category: string;
 }
 
 export default function SearchResults() {
@@ -178,16 +205,7 @@ export default function SearchResults() {
     return { productsData, ordersData, reportsData };
   };
 
-  useEffect(() => {
-    if (query.trim()) {
-      performSearch(query);
-    } else {
-      setResults([]);
-      setHasSearched(false);
-    }
-  }, [query]);
-
-  const performSearch = (searchQuery: string) => {
+  const performSearch = useCallback((searchQuery: string) => {
     setIsLoading(true);
 
     setTimeout(() => {
@@ -195,7 +213,7 @@ export default function SearchResults() {
       const lowerQuery = searchQuery.toLowerCase();
       const { productsData, ordersData, reportsData } = getRealPageData();
 
-      productsData.forEach((product: any) => {
+      productsData.forEach((product: ProductData) => {
         const searchableText = [
           product.name,
           product.category,
@@ -213,7 +231,7 @@ export default function SearchResults() {
         }
       });
 
-      ordersData.forEach((order: any) => {
+      ordersData.forEach((order: OrderData) => {
         const searchableText = [
           order.customer,
           order.products,
@@ -232,7 +250,7 @@ export default function SearchResults() {
         }
       });
 
-      reportsData.forEach((report: any) => {
+      reportsData.forEach((report: ReportData) => {
         const searchableText = [
           report.title,
           report.type,
@@ -254,7 +272,16 @@ export default function SearchResults() {
       setIsLoading(false);
       setHasSearched(true);
     }, 500);
-  };
+  }, []);
+
+  useEffect(() => {
+    if (query.trim()) {
+      performSearch(query);
+    } else {
+      setResults([]);
+      setHasSearched(false);
+    }
+  }, [query, performSearch]);
 
   const getTypeColor = (type: string) => {
     switch (type) {
@@ -290,7 +317,7 @@ export default function SearchResults() {
           <div className="flex items-center gap-3 mb-4">
             <Search size={24} className="text-emerald-400" />
             <h1 className="text-2xl font-bold text-gray-900">
-              Search Results for "{query}"
+              Search Results for &quot;{query}&quot;
             </h1>
           </div>
           <div className="text-gray-600">

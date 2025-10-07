@@ -119,11 +119,11 @@ export function ReportsProvider({ children }: { children: ReactNode }) {
       productCategories.set(product.name, product.category);
     });
 
-    const chartData = Array.from(productSales.entries()).map(([name, data]) => ({
-      name,
-      value: data.revenue,
-      category: productCategories.get(name) || 'Other',
-    }));
+    // const chartData = Array.from(productSales.entries()).map(([name, data]) => ({
+    //   name,
+    //   value: data.revenue,
+    //   category: productCategories.get(name) || 'Other',
+    // }));
 
     const newReport: ReportData = {
       id: Date.now().toString(),

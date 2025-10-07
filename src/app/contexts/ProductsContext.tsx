@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import { storage, Product, ProductVariant } from '../lib/storage';
+import { storage, Product } from '../lib/storage';
 
 // Products Context
 interface ProductsState {

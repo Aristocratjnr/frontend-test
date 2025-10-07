@@ -55,7 +55,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
     router.push('/auth/signin');
   };
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = () => {
     if (searchQuery.trim()) {
       router.push(`/Syst/search?q=${encodeURIComponent(searchQuery.trim())}`);
     }
@@ -170,7 +170,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
               className="w-full pl-7 pr-12 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent bg-white text-sm text-gray-900 placeholder-gray-400"
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
-                  handleSearch(e);
+                  handleSearch();
                 }
               }}
             />
