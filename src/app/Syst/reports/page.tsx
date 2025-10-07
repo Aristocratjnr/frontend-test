@@ -167,27 +167,69 @@ export default function Reports() {
 
       {/* Chart */}
       <div className="bg-white rounded-lg px-2 py-4 sm:px-4 sm:py-6 shadow-sm border border-gray-200">
-        <ResponsiveContainer width="100%" height={450}>
-          <BarChart data={getFilteredData()} barSize={80} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#d1d5db" />
-            <XAxis
-              dataKey="name"
-              axisLine={false}
-              tickLine={false}
-              tick={{ fill: '#6b7280', fontSize: 12 }}
-              angle={-45}
-              textAnchor="end"
-              height={80}
-            />
-            <YAxis
-              axisLine={false}
-              tickLine={false}
-              tick={{ fill: '#6b7280', fontSize: 12 }}
-              width={60}
-            />
-            <Bar dataKey="value" fill="#00881E" radius={[4, 4, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
+        {reportsState.isLoading ? (
+          <div className="animate-pulse">
+            {/* Chart Header Skeleton */}
+            <div className="flex items-center justify-between mb-6">
+              <div className="h-6 bg-gray-200 rounded w-32"></div>
+              <div className="h-4 bg-gray-200 rounded w-24"></div>
+            </div>
+
+            {/* Chart Area Skeleton */}
+            <div className="space-y-4">
+              {/* Y-axis labels skeleton */}
+              <div className="flex justify-between items-end h-80">
+                <div className="flex flex-col justify-between h-full py-2">
+                  {Array(5).fill(0).map((_, i) => (
+                    <div key={i} className="h-4 bg-gray-200 rounded w-8 mb-8"></div>
+                  ))}
+                </div>
+
+                {/* Chart bars skeleton */}
+                <div className="flex-1 flex items-end justify-center space-x-4 px-4">
+                  {Array(8).fill(0).map((_, i) => (
+                    <div key={i} className="flex flex-col items-center space-y-2">
+                      <div
+                        className="bg-gray-200 rounded-t w-12"
+                        style={{ height: `${Math.random() * 180 + 40}px` }}
+                      ></div>
+                      <div className="h-3 bg-gray-200 rounded w-16"></div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* X-axis labels skeleton */}
+            <div className="flex justify-center space-x-4 mt-4">
+              {Array(8).fill(0).map((_, i) => (
+                <div key={i} className="h-3 bg-gray-200 rounded w-16"></div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height={450}>
+            <BarChart data={getFilteredData()} barSize={80} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#d1d5db" />
+              <XAxis
+                dataKey="name"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: '#6b7280', fontSize: 12 }}
+                angle={-45}
+                textAnchor="end"
+                height={80}
+              />
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: '#6b7280', fontSize: 12 }}
+                width={60}
+              />
+              <Bar dataKey="value" fill="#00881E" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        )}
       </div>
     </div>
   );
