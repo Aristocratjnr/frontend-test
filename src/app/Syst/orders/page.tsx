@@ -4,6 +4,8 @@ import { ChevronDown } from 'lucide-react';
 
 export default function Orders() {
   const [isLoading, setIsLoading] = useState(true);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState('All');
 
   const orders = [
     { customer: 'Fried rice', products: 'Assorted, Plain', price: '20', delivery: 'Delivery', date: '12/12/24', status: 'Pending', statusColor: 'bg-yellow-400' },
@@ -14,6 +16,8 @@ export default function Orders() {
     { customer: 'Fried rice', products: 'Assorted, Plain', price: '20', delivery: 'Delivery', date: '12/12/24', status: 'Confirmed', statusColor: 'bg-green-500' },
   ];
 
+  const filterOptions = ['All', 'Pending', 'Confirmed', 'Cancelled'];
+
   useEffect(() => {
     // Simulate loading delay
     const timer = setTimeout(() => {
@@ -22,6 +26,15 @@ export default function Orders() {
 
     return () => clearTimeout(timer);
   }, []);
+
+  const filteredOrders = selectedFilter === 'All'
+    ? orders
+    : orders.filter(order => order.status === selectedFilter);
+
+  const handleFilterSelect = (filter: string) => {
+    setSelectedFilter(filter);
+    setIsFilterOpen(false);
+  };
 
   const SkeletonRow = () => (
     <tr className="border-b border-gray-100">
@@ -51,10 +64,29 @@ export default function Orders() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold text-gray-900">Orders</h1>
-        <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700">
-          <span className="text-sm font-medium">Filter</span>
-          <ChevronDown size={16} />
-        </button>
+        <div className="relative">
+          <button
+            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
+            onClick={() => setIsFilterOpen(!isFilterOpen)}
+          >
+            <span className="text-sm font-medium">Filter: {selectedFilter}</span>
+            <ChevronDown size={16} />
+          </button>
+
+          {isFilterOpen && (
+            <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+              {filterOptions.map((option) => (
+                <button
+                  key={option}
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-50 text-gray-700 first:rounded-t-lg last:rounded-b-lg text-sm"
+                  onClick={() => handleFilterSelect(option)}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Orders Table */}
@@ -78,8 +110,8 @@ export default function Orders() {
                   <SkeletonRow key={index} />
                 ))
               ) : (
-                // Show actual data when loaded
-                orders.map((order, index) => (
+                // Show actual filtered data when loaded
+                filteredOrders.map((order, index) => (
                   <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
                     <td className="py-4 px-6 text-sm text-gray-900">{order.customer}</td>
                     <td className="py-4 px-6 text-sm text-gray-600">{order.products}</td>
