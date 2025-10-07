@@ -11,7 +11,7 @@ export default function SystLayout({
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       <Sidebar />
-      <main className="ml-56 mt-16 p-8">
+      <main className="lg:ml-80 lg:mt-16 p-4 sm:p-6 lg:p-8">
         {children}
       </main>
     </div>

@@ -170,7 +170,7 @@ export default function ProductsPage() {
 
   if (isLoading) {
     return (
-      <div className="p-8">
+      <div className="p-4 sm:p-6 lg:p-8">
         {/* Header skeleton */}
         <div className="flex items-center justify-between mb-6">
           <div className="h-9 bg-gray-200 rounded-lg w-32 animate-pulse"></div>
@@ -181,14 +181,14 @@ export default function ProductsPage() {
         </div>
 
         {/* Products grid skeleton */}
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {Array(9).fill(0).map((_, index) => (
             <div key={index} className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 animate-pulse">
               {/* Image skeleton */}
               <div className="w-full h-40 bg-gray-200"></div>
 
               {/* Content skeleton */}
-              <div className="p-4">
+              <div className="p-3 sm:p-4">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="h-5 bg-gray-200 rounded w-3/4 mb-2"></div>
@@ -209,24 +209,24 @@ export default function ProductsPage() {
 
   return (
     <>
-      <div className="p-8">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-3xl font-bold text-gray-900">Products</h2>
-          <div className="flex gap-3">
+      <div className="p-4 sm:p-6 lg:p-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Products</h2>
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
             <button
               onClick={() => setIsDrawerOpen(true)}
-              className="px-6 py-2 border border-emerald-400 text-emerald-400 rounded-full hover:bg-emerald-50 font-medium transition-colors"
+              className="px-4 sm:px-6 py-2 border border-emerald-400 text-emerald-400 rounded-full hover:bg-emerald-50 font-medium transition-colors w-full sm:w-auto"
             >
               Add Product
             </button>
-            <button className="px-6 py-2 bg-emerald-400 text-white rounded-full hover:bg-emerald-500 font-medium transition-colors">
+            <button className="px-4 sm:px-6 py-2 bg-emerald-400 text-white rounded-full hover:bg-emerald-500 font-medium transition-colors w-full sm:w-auto">
               Add to Cart
             </button>
           </div>
         </div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {products.map((product) => (
             <div key={product.id} className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
               <Image
@@ -236,7 +236,7 @@ export default function ProductsPage() {
                 height={300}
                 className="w-full h-40 object-cover"
               />
-              <div className="p-4">
+              <div className="p-3 sm:p-4">
                 <div className="flex items-start justify-between">
                   <div>
                     <h3 className="font-medium text-gray-900">{product.name}</h3>
@@ -263,9 +263,9 @@ export default function ProductsPage() {
           />
 
           {/* Drawer */}
-          <div className="fixed right-0 top-0 h-screen w-96 bg-white shadow-2xl z-[110] overflow-y-auto">
+          <div className="fixed right-0 top-0 h-screen w-full sm:w-96 bg-white shadow-2xl z-[110] overflow-y-auto">
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+            <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200">
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setIsDrawerOpen(false)}
@@ -281,7 +281,7 @@ export default function ProductsPage() {
             </div>
 
             {/* Form Content */}
-            <div className="p-6 space-y-6">
+            <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
               {/* Product Details Section */}
               <div>
                 <h3 className="text-sm font-semibold text-gray-900 mb-4">Product Details</h3>
@@ -403,7 +403,7 @@ export default function ProductsPage() {
 
                 {variants.map((variant, index) => (
                   <div key={index} className="mb-4">
-                    <div className="grid grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                       <div>
                         <label className="block text-xs font-medium text-gray-700 mb-1">
                           Variant Name*
