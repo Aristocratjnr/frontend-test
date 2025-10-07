@@ -166,10 +166,10 @@ export default function Reports() {
       </div>
 
       {/* Chart */}
-      <div className="bg-white rounded-lg p-4 sm:p-6 shadow-sm border border-gray-200">
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={getFilteredData()} barSize={40} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+      <div className="bg-white rounded-lg px-2 py-4 sm:px-4 sm:py-6 shadow-sm border border-gray-200">
+        <ResponsiveContainer width="100%" height={450}>
+          <BarChart data={getFilteredData()} barSize={80} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#d1d5db" />
             <XAxis
               dataKey="name"
               axisLine={false}

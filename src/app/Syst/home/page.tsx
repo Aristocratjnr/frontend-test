@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
-import { Star, X, Upload, Plus, ImageIcon } from 'lucide-react';
+import { Star, X, Upload, Plus } from 'lucide-react';
 import Image from 'next/image';
 
 // Products Page Component
@@ -8,7 +8,6 @@ export default function ProductsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [variants, setVariants] = useState([{ name: '', price: '', size: '' }]);
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -71,8 +70,6 @@ export default function ProductsPage() {
       return;
     }
 
-    setSelectedImage(file);
-
     // Create preview URL
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -113,7 +110,6 @@ export default function ProductsPage() {
   };
 
   const removeImage = () => {
-    setSelectedImage(null);
     setImagePreview(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -160,7 +156,6 @@ export default function ProductsPage() {
         variants: [{ name: '', price: '', size: '' }]
       });
       setVariants([{ name: '', price: '', size: '' }]);
-      setSelectedImage(null);
       setImagePreview(null);
       setIsDrawerOpen(false);
 
@@ -327,9 +322,11 @@ export default function ProductsPage() {
                     </div>
                   ) : (
                     <div className="relative">
-                      <img
+                      <Image
                         src={imagePreview}
                         alt="Preview"
+                        width={400}
+                        height={300}
                         className="w-full h-48 object-cover rounded-lg border border-gray-200"
                       />
                       <button

@@ -39,7 +39,7 @@ export default function Sidebar() {
       </div>
 
       {/* Menu Items */}
-      <nav className="space-y-2">
+      <nav className="space-y-4">
         {menuItems.map((item) => {
           const isActive = pathname === item.href;
           const IconComponent = item.icon;

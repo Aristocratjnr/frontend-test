@@ -1,7 +1,10 @@
-import React from 'react';
+"use client";
+import React, { useState, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 
 export default function Orders() {
+  const [isLoading, setIsLoading] = useState(true);
+
   const orders = [
     { customer: 'Fried rice', products: 'Assorted, Plain', price: '20', delivery: 'Delivery', date: '12/12/24', status: 'Pending', statusColor: 'bg-yellow-400' },
     { customer: 'Fried rice', products: 'Assorted, Plain', price: '20', delivery: 'Delivery', date: '12/12/24', status: 'Confirmed', statusColor: 'bg-green-500' },
@@ -10,6 +13,38 @@ export default function Orders() {
     { customer: 'Fried rice', products: 'Assorted, Plain', price: '20', delivery: 'Delivery', date: '12/12/24', status: 'Confirmed', statusColor: 'bg-green-500' },
     { customer: 'Fried rice', products: 'Assorted, Plain', price: '20', delivery: 'Delivery', date: '12/12/24', status: 'Confirmed', statusColor: 'bg-green-500' },
   ];
+
+  useEffect(() => {
+    // Simulate loading delay
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const SkeletonRow = () => (
+    <tr className="border-b border-gray-100">
+      <td className="py-4 px-6">
+        <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+      </td>
+      <td className="py-4 px-6">
+        <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4"></div>
+      </td>
+      <td className="py-4 px-6">
+        <div className="h-4 bg-gray-200 rounded animate-pulse w-1/2"></div>
+      </td>
+      <td className="py-4 px-6">
+        <div className="h-4 bg-gray-200 rounded animate-pulse w-1/2"></div>
+      </td>
+      <td className="py-4 px-6">
+        <div className="h-4 bg-gray-200 rounded animate-pulse w-2/3"></div>
+      </td>
+      <td className="py-4 px-6">
+        <div className="h-8 bg-gray-200 rounded animate-pulse w-24"></div>
+      </td>
+    </tr>
+  );
 
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
@@ -37,21 +72,29 @@ export default function Orders() {
               </tr>
             </thead>
             <tbody>
-              {orders.map((order, index) => (
-                <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
-                  <td className="py-4 px-6 text-sm text-gray-900">{order.customer}</td>
-                  <td className="py-4 px-6 text-sm text-gray-600">{order.products}</td>
-                  <td className="py-4 px-6 text-sm text-gray-900">{order.price}</td>
-                  <td className="py-4 px-6 text-sm text-gray-900">{order.delivery}</td>
-                  <td className="py-4 px-6 text-sm text-gray-900">{order.date}</td>
-                  <td className="py-4 px-6">
-                    <button className={`${order.statusColor} text-white px-4 py-1.5 rounded text-sm font-medium flex items-center gap-2 min-w-[110px] justify-between`}>
-                      <span>{order.status}</span>
-                      <ChevronDown size={14} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {isLoading ? (
+                // Show skeleton loaders while loading
+                Array.from({ length: 6 }).map((_, index) => (
+                  <SkeletonRow key={index} />
+                ))
+              ) : (
+                // Show actual data when loaded
+                orders.map((order, index) => (
+                  <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
+                    <td className="py-4 px-6 text-sm text-gray-900">{order.customer}</td>
+                    <td className="py-4 px-6 text-sm text-gray-600">{order.products}</td>
+                    <td className="py-4 px-6 text-sm text-gray-900">{order.price}</td>
+                    <td className="py-4 px-6 text-sm text-gray-900">{order.delivery}</td>
+                    <td className="py-4 px-6 text-sm text-gray-900">{order.date}</td>
+                    <td className="py-4 px-6">
+                      <button className={`${order.statusColor} text-white px-4 py-1.5 rounded text-sm font-medium flex items-center gap-2 min-w-[110px] justify-between`}>
+                        <span>{order.status}</span>
+                        <ChevronDown size={14} />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
