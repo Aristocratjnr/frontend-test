@@ -189,7 +189,27 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
 
         {/* Right Side Icons */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Notification Bell */}
+         
+
+          {/* Cart and Profile */}
+          <div className="flex items-center space-x-2 sm:space-x-4">
+            {/* Cart Icon */}
+            <div className="relative">
+              <button
+                onClick={() => setIsPaymentModalOpen(true)}
+                className="p-2 text-gray-600 hover:text-gray-900 relative"
+                aria-label="Shopping cart"
+              >
+                <ShoppingCart size={20} />
+                {cartItemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-emerald-400 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                    {cartItemCount}
+                  </span>
+                )}
+              </button>
+            </div>
+
+             {/* Notification Bell */}
           <div className="relative dropdown-container">
             <button
               onClick={() => setIsNotificationDropdownOpen(!isNotificationDropdownOpen)}
@@ -265,24 +285,6 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
               </div>
             )}
           </div>
-
-          {/* Cart and Profile */}
-          <div className="flex items-center space-x-2 sm:space-x-4">
-            {/* Cart Icon */}
-            <div className="relative">
-              <button
-                onClick={() => setIsPaymentModalOpen(true)}
-                className="p-2 text-gray-600 hover:text-gray-900 relative"
-                aria-label="Shopping cart"
-              >
-                <ShoppingCart size={20} />
-                {cartItemCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-emerald-400 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                    {cartItemCount}
-                  </span>
-                )}
-              </button>
-            </div>
 
             {/* Profile Dropdown */}
             <div className="relative dropdown-container">
