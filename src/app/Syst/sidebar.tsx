@@ -3,7 +3,7 @@
 import React, { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, ShoppingBag, ShoppingCart, BarChart3, X } from 'lucide-react';
+import { Home, ShoppingBag, ShoppingCart, BarChart3 } from 'lucide-react';
 
 interface SidebarProps {
   isOpen?: boolean;

@@ -1,16 +1,75 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
-import { Star, X, Upload, Plus } from 'lucide-react';
+import { Star, X, Upload, Plus, Minus } from 'lucide-react';
 import Image from 'next/image';
+import toast from 'react-hot-toast';
+import { useCart, CartItem } from '../../contexts/CartContext';
 
 // Products Page Component
 export default function ProductsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<{
+    id: number;
+    name: string;
+    price: string;
+    rating: number;
+    image: string;
+    category: string;
+    description: string;
+  } | null>(null);
   const [variants, setVariants] = useState([{ name: '', price: '', size: '' }]);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Cart context
+  const { addToCart } = useCart();
+  
+  // Local state for the current product being added to cart
+  const [currentCartItems, setCurrentCartItems] = useState<Array<{
+    size: string;
+    price: number;
+    quantity: number;
+  }>>([
+    { size: 'Small', price: 100, quantity: 0 },
+    { size: 'Medium', price: 150, quantity: 0 },
+    { size: 'Large', price: 160, quantity: 0 }
+  ]);
+
+  // Add items to cart
+  const handleAddToCart = () => {
+    // Get items with quantity > 0
+    const itemsToAdd = currentCartItems.filter(item => item.quantity > 0);
+    
+    if (selectedProduct && itemsToAdd.length > 0) {
+      itemsToAdd.forEach(item => {
+        const cartItem: CartItem = {
+          id: selectedProduct.id,
+          name: selectedProduct.name,
+          size: item.size,
+          price: item.price,
+          quantity: item.quantity,
+          image: selectedProduct.image
+        };
+        addToCart(cartItem);
+      });
+      
+      const totalItems = itemsToAdd.reduce((sum, item) => sum + item.quantity, 0);
+      toast.success(`${totalItems} item(s) added to cart`);
+      setIsCartDrawerOpen(false);
+      
+      // Reset quantities
+      setCurrentCartItems([
+        { size: 'Small', price: 100, quantity: 0 },
+        { size: 'Medium', price: 150, quantity: 0 },
+        { size: 'Large', price: 160, quantity: 0 },
+      ]);
+    } else {
+      toast.error('Please select at least one item');
+    }
+  };
 
   // Form state for new products
   const [newProductData, setNewProductData] = useState({
@@ -219,7 +278,22 @@ export default function ProductsPage() {
             >
               Add Product
             </button>
-            <button className="px-4 sm:px-6 py-2 bg-emerald-400 text-white rounded-full hover:bg-emerald-500 font-medium transition-colors w-full sm:w-auto">
+            <button
+              onClick={() => {
+                // If no product is selected, select the first product as default
+                if (!selectedProduct && products.length > 0) {
+                  setSelectedProduct(products[0]);
+                }
+                setIsCartDrawerOpen(true);
+                // Reset quantities when opening modal
+                setCurrentCartItems([
+                  { size: 'Small', price: 100, quantity: 0 },
+                  { size: 'Medium', price: 150, quantity: 0 },
+                  { size: 'Large', price: 160, quantity: 0 },
+                ]);
+              }}
+              className="px-4 sm:px-6 py-2 bg-emerald-400 text-white rounded-full hover:bg-emerald-500 font-medium transition-colors w-full sm:w-auto"
+            >
               Add to Cart
             </button>
           </div>
@@ -234,10 +308,10 @@ export default function ProductsPage() {
                 alt={product.name}
                 width={400}
                 height={300}
-                className="w-full h-40 object-cover"
+                className="w-full h-40 object-cover rounded-lg"
               />
               <div className="p-3 sm:p-4">
-                <div className="flex items-start justify-between">
+                <div className="flex items-start justify-between mb-3">
                   <div>
                     <h3 className="font-medium text-gray-900">{product.name}</h3>
                     <p className="text-gray-600 text-sm mt-1">{product.price}</p>
@@ -483,6 +557,128 @@ export default function ProductsPage() {
                 className="w-full py-3 bg-emerald-400 text-white rounded-lg hover:bg-emerald-500 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? 'Adding Product...' : 'Add Product'}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Add to Cart Drawer */}
+      {isCartDrawerOpen && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-white/20 backdrop-blur-sm z-[100] transition-all duration-300"
+            onClick={() => setIsCartDrawerOpen(false)}
+            onKeyUp={(e) => {
+              if (e.key === 'Escape') {
+                setIsCartDrawerOpen(false);
+              }
+            }}
+          />
+
+          {/* Drawer */}
+          <div className="fixed right-0 top-0 h-screen w-full sm:w-96 bg-white shadow-2xl z-[110] overflow-y-auto flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h2 className="text-xl font-bold text-gray-900">Add to Cart</h2>
+              <button
+                onClick={() => setIsCartDrawerOpen(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 p-6 space-y-6">
+              {/* Product Info */}
+              {selectedProduct ? (
+                <div className="flex gap-4">
+                  <Image
+                    src={selectedProduct.image}
+                    alt={selectedProduct.name}
+                    width={80}
+                    height={80}
+                    className="w-20 h-20 object-cover rounded-lg"
+                  />
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 text-base">{selectedProduct.name}</h3>
+                    <p className="text-sm text-gray-600 mt-1">
+                      GHS {currentCartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2)} - {currentCartItems.reduce((sum, item) => sum + item.quantity, 0)} items
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex gap-4">
+                  <div className="w-20 h-20 bg-gray-200 rounded-lg"></div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 text-base">Select a Product</h3>
+                    <p className="text-sm text-gray-600 mt-1">Please select a product to add to cart</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Size Selection */}
+              <div>
+                <h3 className="text-sm font-medium text-gray-900 mb-3">Select</h3>
+                <div className="space-y-4">
+                  {currentCartItems.map((item, index) => (
+                    <div key={index} className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <p className="text-gray-700 text-sm font-medium">{item.size}</p>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <span className="text-gray-700 text-sm font-medium min-w-[70px] text-right">GHC {item.price}</span>
+                        <div className="flex items-center gap-3 bg-gray-50 rounded-lg px-2 py-1">
+                          <button
+                            onClick={() => {
+                              const newItems = [...currentCartItems];
+                              if (newItems[index].quantity > 0) {
+                                newItems[index].quantity--;
+                                setCurrentCartItems(newItems);
+                              }
+                            }}
+                            className="w-6 h-6 rounded-md bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors text-gray-600"
+                          >
+                            <Minus size={14} />
+                          </button>
+                          <span className="w-8 text-center text-sm font-medium text-gray-900">
+                            {item.quantity}
+                          </span>
+                          <button
+                            onClick={() => {
+                              const newItems = [...currentCartItems];
+                              newItems[index].quantity++;
+                              setCurrentCartItems(newItems);
+                            }}
+                            className="w-6 h-6 rounded-md bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors text-gray-600"
+                          >
+                            <Plus size={14} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Footer with Total and Button */}
+            <div className="border-t border-gray-200 p-6 space-y-4 bg-white">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600 text-sm font-medium">Total</span>
+                <span className="text-3xl font-bold text-gray-900">
+                  {currentCartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)}
+                </span>
+              </div>
+
+              {/* Add to Cart Button */}
+              <button
+                onClick={handleAddToCart}
+                className="w-full py-3.5 bg-emerald-400 text-white rounded-lg hover:bg-emerald-500 font-semibold transition-colors text-base"
+              >
+                Add to Cart
               </button>
             </div>
           </div>
