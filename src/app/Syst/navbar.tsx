@@ -15,6 +15,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] = useState(false);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('momo');
   const [deliveryOption, setDeliveryOption] = useState('delivery');
   const [paymentData, setPaymentData] = useState({
@@ -42,6 +43,11 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
+  }, []);
+
+  // Set client-side flag to prevent hydration issues
+  useEffect(() => {
+    setIsClient(true);
   }, []);
 
   const handleLogout = () => {
@@ -201,7 +207,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
                 aria-label="Shopping cart"
               >
                 <ShoppingCart size={20} />
-                {cartItemCount > 0 && (
+                {isClient && cartItemCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-emerald-400 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                     {cartItemCount}
                   </span>
@@ -218,14 +224,14 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
               aria-haspopup="true"
             >
               <Bell size={20} className="text-gray-600" />
-              {unreadCount > 0 && (
+              {isClient && unreadCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                   {unreadCount > 99 ? '99+' : unreadCount}
                 </span>
               )}
             </button>
 
-            {isNotificationDropdownOpen && (
+            {isClient && isNotificationDropdownOpen && (
               <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
                 <div className="p-4 border-b border-gray-100">
                   <div className="flex items-center justify-between">
