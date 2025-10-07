@@ -63,6 +63,9 @@ Before running this application, make sure you have the following installed:
    # or
    bun dev
    ```
+**Important**
+To run the docker: 
+Use: docker compose up --build -d
 
 4. **Open your browser**:
    Navigate to [http://localhost:3000](http://localhost:3000) to see the application running.
