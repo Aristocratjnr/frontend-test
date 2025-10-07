@@ -337,28 +337,28 @@ export default function ProductsPage() {
           />
 
           {/* Drawer */}
-          <div className="fixed right-0 top-0 h-screen w-full sm:w-[550px] bg-white shadow-2xl z-[110] overflow-y-auto">
+          <div className="fixed right-0 top-0 h-screen w-full sm:w-[500px] md:w-[550px] bg-white shadow-2xl z-[110] overflow-y-auto">
             {/* Header */}
-            <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200">
-              <div className="flex items-center gap-3">
+            <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 bg-white">
+              <div className="flex items-center gap-2 sm:gap-3">
                 <button
                   onClick={() => setIsDrawerOpen(false)}
-                  className="text-gray-500 hover:text-gray-700"
+                  className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
                   title="Back"
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M19 12H5M12 19l-7-7 7-7"/>
                   </svg>
                 </button>
-                <h2 className="text-xl font-bold text-gray-900">Add Product</h2>
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900">Add Product</h2>
               </div>
             </div>
 
             {/* Form Content */}
-            <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+            <div className="p-4 sm:p-6 space-y-6 sm:space-y-8">
               {/* Product Details Section */}
               <div>
-                <h3 className="text-sm font-semibold text-gray-900 mb-4">Product Details</h3>
+                <h3 className="text-base sm:text-sm font-semibold text-gray-900 mb-4 sm:mb-6">Product Details</h3>
 
                 {/* Image Upload */}
                 <div className="mb-4">
@@ -378,7 +378,7 @@ export default function ProductsPage() {
                   {/* Upload area */}
                   {!imagePreview ? (
                     <div
-                      className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer ${
+                      className={`border-2 border-dashed rounded-lg p-6 sm:p-8 text-center transition-colors cursor-pointer min-h-[120px] sm:min-h-[140px] flex flex-col justify-center ${
                         isDragOver
                           ? 'border-emerald-400 bg-emerald-50'
                           : 'border-gray-300 hover:border-emerald-400'
@@ -401,18 +401,18 @@ export default function ProductsPage() {
                         alt="Preview"
                         width={400}
                         height={300}
-                        className="w-full h-48 object-cover rounded-lg border border-gray-200"
+                        className="w-full h-40 sm:h-48 object-cover rounded-lg border border-gray-200"
                       />
                       <button
                         onClick={removeImage}
-                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 hover:bg-red-600 transition-colors"
                         title="Remove image"
                       >
                         <X size={16} />
                       </button>
                       <button
                         onClick={handleUploadClick}
-                        className="absolute bottom-2 right-2 bg-white bg-opacity-80 text-gray-700 rounded px-2 py-1 text-xs hover:bg-opacity-100 transition-all"
+                        className="absolute bottom-2 right-2 bg-white bg-opacity-90 text-gray-700 rounded px-3 py-1 text-xs hover:bg-opacity-100 transition-all"
                       >
                         Change
                       </button>
@@ -421,7 +421,7 @@ export default function ProductsPage() {
                 </div>
 
                 {/* Product Name */}
-                <div className="mb-4">
+                <div className="mb-4 sm:mb-6">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Product Name*
                   </label>
@@ -430,20 +430,20 @@ export default function ProductsPage() {
                     placeholder="Enter product name"
                     value={newProductData.name}
                     onChange={(e) => setNewProductData({ ...newProductData, name: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent text-gray-900 placeholder:text-gray-900"
+                    className="w-full px-4 py-3 sm:py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent text-gray-900 placeholder:text-gray-500 text-base sm:text-sm"
                     required
                   />
                 </div>
 
                 {/* Category */}
-                <div className="mb-4">
+                <div className="mb-4 sm:mb-6">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Category*
                   </label>
                   <select
                     value={newProductData.category}
                     onChange={(e) => setNewProductData({ ...newProductData, category: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent text-gray-900"
+                    className="w-full px-4 py-3 sm:py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent text-gray-900 text-base sm:text-sm h-12 sm:h-auto"
                     required
                   >
                     <option value="">Select category</option>
@@ -456,7 +456,7 @@ export default function ProductsPage() {
                 </div>
 
                 {/* Product Description */}
-                <div className="mb-4">
+                <div className="mb-4 sm:mb-6">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Product Description*
                   </label>
@@ -465,7 +465,7 @@ export default function ProductsPage() {
                     value={newProductData.description}
                     onChange={(e) => setNewProductData({ ...newProductData, description: e.target.value })}
                     rows={4}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent resize-none text-gray-900 placeholder:text-gray-900"
+                    className="w-full px-4 py-3 sm:py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent resize-none text-gray-900 placeholder:text-gray-500 text-base sm:text-sm"
                     required
                   />
                 </div>
@@ -476,8 +476,8 @@ export default function ProductsPage() {
                 <h3 className="text-sm font-semibold text-gray-900 mb-4">Product variants</h3>
 
                 {variants.map((variant, index) => (
-                  <div key={index} className="mb-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  <div key={index} className="mb-4 sm:mb-6 p-4 bg-gray-50 rounded-lg">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                       <div>
                         <label className="block text-xs font-medium text-gray-700 mb-1">
                           Variant Name*
@@ -492,7 +492,7 @@ export default function ProductsPage() {
                             setVariants(newVariants);
                             setNewProductData({ ...newProductData, variants: newVariants });
                           }}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent text-sm text-gray-900 placeholder:text-gray-900"
+                          className="w-full px-3 py-3 sm:py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent text-sm text-gray-900 placeholder:text-gray-400"
                           required
                         />
                       </div>
@@ -511,7 +511,7 @@ export default function ProductsPage() {
                             setVariants(newVariants);
                             setNewProductData({ ...newProductData, variants: newVariants });
                           }}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent text-sm text-gray-900 placeholder:text-gray-900"
+                          className="w-full px-3 py-3 sm:py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent text-sm text-gray-900 placeholder:text-gray-400"
                           required
                         />
                       </div>
@@ -529,7 +529,7 @@ export default function ProductsPage() {
                             setVariants(newVariants);
                             setNewProductData({ ...newProductData, variants: newVariants });
                           }}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent text-sm text-gray-900 placeholder:text-gray-900"
+                          className="w-full px-3 py-3 sm:py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent text-sm text-gray-900 placeholder:text-gray-400"
                         />
                       </div>
                     </div>
@@ -543,7 +543,7 @@ export default function ProductsPage() {
                     setVariants(newVariants);
                     setNewProductData({ ...newProductData, variants: newVariants });
                   }}
-                  className="flex items-center gap-2 text-emerald-400 hover:text-emerald-500 font-medium text-sm"
+                  className="flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-medium text-sm transition-colors mt-2"
                 >
                   <Plus size={16} />
                   Add another variant
@@ -551,13 +551,15 @@ export default function ProductsPage() {
               </div>
 
               {/* Add Product Button */}
-              <button
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-                className="w-full py-3 bg-emerald-400 text-white rounded-lg hover:bg-emerald-500 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isSubmitting ? 'Adding Product...' : 'Add Product'}
-              </button>
+              <div className="pt-4 border-t border-gray-200">
+                <button
+                  onClick={handleSubmit}
+                  disabled={isSubmitting}
+                  className="w-full py-4 sm:py-3 bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg font-semibold text-base sm:text-sm transition-colors"
+                >
+                  {isSubmitting ? 'Adding Product...' : 'Add Product'}
+                </button>
+              </div>
             </div>
           </div>
         </>
