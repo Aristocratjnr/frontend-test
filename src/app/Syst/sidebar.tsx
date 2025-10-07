@@ -94,7 +94,7 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
   return (
     <>
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:block fixed left-0 top-16 bottom-0 w-80 bg-white border-r border-gray-200 shadow-sm">
+      <aside className="hidden lg:block fixed left-0 top-4 bottom-0 w-80 bg-white border-r border-gray-200 shadow-sm">
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="p-6 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
@@ -142,7 +142,7 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
       {isOpen && (
         <aside
           ref={sidebarRef}
-          className="lg:hidden fixed left-0 top-16 bottom-0 w-80 bg-white shadow-2xl z-50 border-r border-gray-200"
+          className="lg:hidden fixed left-0 top-12 bottom-0 w-80 bg-white shadow-2xl z-50 border-r border-gray-200"
           role="dialog"
           aria-modal="true"
           aria-label="Navigation menu"

@@ -6,15 +6,15 @@ export default function Orders() {
   const [isLoading, setIsLoading] = useState(true);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState('All');
-
-  const orders = [
+  const [openStatusDropdown, setOpenStatusDropdown] = useState<number | null>(null);
+  const [ordersData, setOrdersData] = useState([
     { customer: 'Fried rice', products: 'Assorted, Plain', price: '20', delivery: 'Delivery', date: '12/12/24', status: 'Pending', statusColor: 'bg-yellow-400' },
     { customer: 'Fried rice', products: 'Assorted, Plain', price: '20', delivery: 'Delivery', date: '12/12/24', status: 'Confirmed', statusColor: 'bg-green-500' },
     { customer: 'Fried rice', products: 'Assorted, Plain', price: '20', delivery: 'Delivery', date: '12/12/24', status: 'Pending', statusColor: 'bg-yellow-400' },
     { customer: 'Fried rice', products: 'Assorted, Plain', price: '20', delivery: 'Delivery', date: '12/12/24', status: 'Cancelled', statusColor: 'bg-red-500' },
     { customer: 'Fried rice', products: 'Assorted, Plain', price: '20', delivery: 'Delivery', date: '12/12/24', status: 'Confirmed', statusColor: 'bg-green-500' },
     { customer: 'Fried rice', products: 'Assorted, Plain', price: '20', delivery: 'Delivery', date: '12/12/24', status: 'Confirmed', statusColor: 'bg-green-500' },
-  ];
+  ]);
 
   const filterOptions = ['All', 'Pending', 'Confirmed', 'Cancelled'];
 
@@ -27,13 +27,47 @@ export default function Orders() {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (openStatusDropdown !== null && !(event.target as Element).closest('.status-dropdown')) {
+        setOpenStatusDropdown(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [openStatusDropdown]);
+
   const filteredOrders = selectedFilter === 'All'
-    ? orders
-    : orders.filter(order => order.status === selectedFilter);
+    ? ordersData
+    : ordersData.filter(order => order.status === selectedFilter);
 
   const handleFilterSelect = (filter: string) => {
     setSelectedFilter(filter);
     setIsFilterOpen(false);
+  };
+
+  const handleStatusToggle = (index: number) => {
+    setOpenStatusDropdown(openStatusDropdown === index ? null : index);
+  };
+
+  const handleStatusChange = (index: number, newStatus: string) => {
+    const newStatusColor = newStatus === 'Pending' ? 'bg-yellow-400' :
+                          newStatus === 'Confirmed' ? 'bg-green-500' : 'bg-red-500';
+
+    setOrdersData(prevOrders =>
+      prevOrders.map((order, i) =>
+        i === index ? { ...order, status: newStatus, statusColor: newStatusColor } : order
+      )
+    );
+    setOpenStatusDropdown(null);
+  };
+
+  const getStatusOptions = (currentStatus: string) => {
+    const options = ['Pending', 'Confirmed', 'Cancelled'];
+    return options.filter(option => option !== currentStatus);
   };
 
   const SkeletonRow = () => (
@@ -119,10 +153,29 @@ export default function Orders() {
                     <td className="py-3 sm:py-4 px-2 sm:px-4 lg:px-6 text-xs sm:text-sm text-gray-900">{order.delivery}</td>
                     <td className="py-3 sm:py-4 px-2 sm:px-4 lg:px-6 text-xs sm:text-sm text-gray-900">{order.date}</td>
                     <td className="py-3 sm:py-4 px-2 sm:px-4 lg:px-6">
-                      <button className={`${order.statusColor} text-white px-2 sm:px-3 lg:px-4 py-1 sm:py-1.5 rounded text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2 min-w-[80px] sm:min-w-[90px] lg:min-w-[110px] justify-between`}>
-                        <span>{order.status}</span>
-                        <ChevronDown size={12} className="sm:w-3.5 sm:h-3.5" />
-                      </button>
+                      <div className="relative">
+                        <button
+                          className={`${order.statusColor} text-white px-2 sm:px-3 lg:px-4 py-1 sm:py-1.5 rounded text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2 min-w-[80px] sm:min-w-[90px] lg:min-w-[110px] justify-between`}
+                          onClick={() => handleStatusToggle(index)}
+                        >
+                          <span>{order.status}</span>
+                          <ChevronDown size={12} className="sm:w-3.5 sm:h-3.5" />
+                        </button>
+
+                        {openStatusDropdown === index && (
+                          <div className="status-dropdown absolute right-0 mt-2 w-full sm:w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                            {getStatusOptions(order.status).map((statusOption) => (
+                              <button
+                                key={statusOption}
+                                className="block w-full text-left px-3 sm:px-4 py-2 hover:bg-gray-50 text-gray-700 first:rounded-t-lg last:rounded-b-lg text-xs sm:text-sm"
+                                onClick={() => handleStatusChange(index, statusOption)}
+                              >
+                                {statusOption}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))
