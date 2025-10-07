@@ -337,7 +337,7 @@ export default function ProductsPage() {
           />
 
           {/* Drawer */}
-          <div className="fixed right-0 top-0 h-screen w-full sm:w-96 bg-white shadow-2xl z-[110] overflow-y-auto">
+          <div className="fixed right-0 top-0 h-screen w-full sm:w-[550px] bg-white shadow-2xl z-[110] overflow-y-auto">
             {/* Header */}
             <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200">
               <div className="flex items-center gap-3">

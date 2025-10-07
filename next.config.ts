@@ -17,9 +17,6 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || '',
   },
 
-  // Performance optimizations
-  swcMinify: true,
-
   // Image optimization for container environments
   images: {
     domains: process.env.NODE_ENV === 'production' ? ['localhost'] : [],
