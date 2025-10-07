@@ -1,6 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "./contexts/AuthContext";
+import { ProductsProvider } from "./contexts/ProductsContext";
+import { OrdersProvider } from "./contexts/OrdersContext";
+import { ReportsProvider } from "./contexts/ReportsContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,15 +19,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Syst",
-  description: "POS",
+  title: "Syst POS",
+  description: "Modern Point of Sale System",
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  maximumScale: 5,
+  userScalable: true,
   themeColor: "#0DD983",
 };
 
@@ -37,9 +41,17 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-full bg-gray-50`}
       >
-        <div className="min-h-screen">
-          {children}
-        </div>
+        <AuthProvider>
+          <ProductsProvider>
+            <OrdersProvider>
+              <ReportsProvider>
+                <div className="min-h-screen">
+                  {children}
+                </div>
+              </ReportsProvider>
+            </OrdersProvider>
+          </ProductsProvider>
+        </AuthProvider>
       </body>
     </html>
   );

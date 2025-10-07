@@ -1,11 +1,13 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { Star } from 'lucide-react';
+import { Star, X, Upload, Plus } from 'lucide-react';
 import Image from 'next/image';
 
 // Products Page Component
 export default function ProductsPage() {
   const [isLoading, setIsLoading] = useState(true);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [variants, setVariants] = useState([{ name: '', price: '', size: '' }]);
   const [products, setProducts] = useState<Array<{
     id: number;
     name: string;
@@ -85,7 +87,10 @@ export default function ProductsPage() {
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-3xl font-bold text-gray-900">Products</h2>
         <div className="flex gap-3">
-          <button className="px-6 py-2 border border-emerald-400 text-emerald-400 rounded-lg hover:bg-emerald-50 font-medium transition-colors">
+          <button 
+            onClick={() => setIsDrawerOpen(true)}
+            className="px-6 py-2 border border-emerald-400 text-emerald-400 rounded-lg hover:bg-emerald-50 font-medium transition-colors"
+          >
             Add Product
           </button>
           <button className="px-6 py-2 bg-emerald-400 text-white rounded-lg hover:bg-emerald-500 font-medium transition-colors">
@@ -120,6 +125,161 @@ export default function ProductsPage() {
           </div>
         ))}
       </div>
+
+      {/* Add Product Drawer */}
+      {isDrawerOpen && (
+        <>
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 z-40"
+            onClick={() => setIsDrawerOpen(false)}
+          />
+          
+          {/* Drawer */}
+          <div className="fixed right-0 top-0 h-full w-96 bg-white shadow-2xl z-50 overflow-y-auto">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h2 className="text-xl font-bold text-gray-900">Add Product</h2>
+              <button 
+                onClick={() => setIsDrawerOpen(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            {/* Form Content */}
+            <div className="p-6 space-y-6">
+              {/* Product Details Section */}
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900 mb-4">Product Details</h3>
+                
+                {/* Image Upload */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Image*
+                  </label>
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-emerald-400 transition-colors cursor-pointer">
+                    <Upload className="mx-auto text-gray-400 mb-2" size={24} />
+                    <p className="text-sm text-gray-500">Click here or Drag your file here to upload it</p>
+                  </div>
+                </div>
+
+                {/* Product Name */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Product Name*
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Enter title"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent"
+                  />
+                </div>
+
+                {/* Category */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Category*
+                  </label>
+                  <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent text-gray-500">
+                    <option>Select category</option>
+                    <option>Pizza</option>
+                    <option>Burger</option>
+                    <option>Drinks</option>
+                  </select>
+                </div>
+
+                {/* Product Description */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Product Name*
+                  </label>
+                  <textarea
+                    placeholder="Enter description"
+                    rows={4}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent resize-none"
+                  />
+                </div>
+              </div>
+
+              {/* Product Variants Section */}
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900 mb-4">Product variants</h3>
+                
+                {variants.map((variant, index) => (
+                  <div key={index} className="mb-4">
+                    <div className="grid grid-cols-3 gap-3">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                          Variant Name*
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="Enter name"
+                          value={variant.name}
+                          onChange={(e) => {
+                            const newVariants = [...variants];
+                            newVariants[index].name = e.target.value;
+                            setVariants(newVariants);
+                          }}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                          Price*
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="Enter price"
+                          value={variant.price}
+                          onChange={(e) => {
+                            const newVariants = [...variants];
+                            newVariants[index].price = e.target.value;
+                            setVariants(newVariants);
+                          }}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                          Size*
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="Enter size"
+                          value={variant.size}
+                          onChange={(e) => {
+                            const newVariants = [...variants];
+                            newVariants[index].size = e.target.value;
+                            setVariants(newVariants);
+                          }}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent text-sm"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Add Another Variant Button */}
+                <button
+                  onClick={() => setVariants([...variants, { name: '', price: '', size: '' }])}
+                  className="flex items-center gap-2 text-emerald-400 hover:text-emerald-500 font-medium text-sm"
+                >
+                  <Plus size={16} />
+                  Add another variant
+                </button>
+              </div>
+
+              {/* Add Product Button */}
+              <button className="w-full py-3 bg-emerald-400 text-white rounded-lg hover:bg-emerald-500 font-medium transition-colors">
+                Add Product
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

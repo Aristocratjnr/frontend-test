@@ -1,29 +1,39 @@
 import React from 'react';
 import Image from 'next/image';
+
 export default function Navbar() {
   return (
     <nav className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 z-10">
       {/* Logo */}
       <div className="flex-shrink-0">
-        <h1 className="text-2xl font-bold text-emerald-400" style={{ fontFamily: 'Georgia, serif' }}>
+        <h1
+          className="text-emerald-400"
+          style={{
+            fontFamily: 'Carena',
+            fontWeight: 400,
+            fontStyle: 'normal',
+            fontSize: '40px',
+            lineHeight: '120%',
+            letterSpacing: '0px'
+          }}
+        >
           Syst
         </h1>
       </div>
 
       {/* Search Bar */}
       <div className="flex-1 max-w-md mx-8">
-        <div className="relative">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <div className="relative flex items-center justify-center">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
               <circle cx="11" cy="11" r="8"/>
               <path d="m21 21-4.35-4.35"/>
             </svg>
-          </span>
+          </div>
           <input
             type="text"
             placeholder="Search"
-            className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent bg-gray-50 text-sm placeholder-gray-400"
-          />
+            className="w-full pl-7 pr-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent bg-white text-sm placeholder-gray-400 text-center" />
         </div>
       </div>
 
