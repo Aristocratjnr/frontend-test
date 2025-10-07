@@ -20,6 +20,7 @@ A modern, responsive Point of Sale (POS) system built with Next.js 15, React 19,
 - **Styling**: Tailwind CSS v4
 - **State Management**: React Context API with useReducer
 - **Icons**: Lucide React
+- **Notifications**: react-hot-toast
 - **Charts**: Recharts
 - **Containerization**: Docker
 
