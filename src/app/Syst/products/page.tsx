@@ -91,7 +91,7 @@ export default function ProductHistory() {
   }
 
   return (
-    <div className="bg-gray-50 p-4 sm:p-6 lg:p-8 pt-6 sm:pt-6 lg:pt-8">
+    <div className="bg-gray-50 p-4 sm:p-6 lg:p-8 pt-12 sm:pt-6 lg:pt-8">
       <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
         <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-6">Product History</h2>
 

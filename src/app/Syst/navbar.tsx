@@ -43,7 +43,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 h-16 bg-white/95 backdrop-blur-md border-b border-gray-200/50 flex items-center justify-between px-4 sm:px-8 z-50 shadow-sm">
+      <nav className="fixed top-0 left-0 right-0 h-16 bg-white backdrop-blur-md border-b border-gray-200/50 flex items-center justify-between px-4 sm:px-8 z-50 shadow-sm">
         {/* Mobile Menu Button */}
         <button
           onClick={() => {

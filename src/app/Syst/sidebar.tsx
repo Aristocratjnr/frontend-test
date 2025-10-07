@@ -133,7 +133,7 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-gray-100 bg-gray-50/30">
+          <div className="p-4 bg-gray-50/30">
           </div>
         </div>
       </aside>
@@ -149,16 +149,7 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
         >
           <div className="flex flex-col h-full">
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-gray-50/50">
-              <h2 className="text-lg font-semibold text-gray-900">Navigation</h2>
-              <button
-                ref={closeButtonRef}
-                onClick={onClose}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-all duration-200 text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2"
-                aria-label="Close navigation menu"
-              >
-                <X size={20} />
-              </button>
+            <div className="p-6 border-b border-gray-100 bg-gray-50/50">
             </div>
 
             {/* Menu Items */}
@@ -199,7 +190,7 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
             </nav>
 
             {/* Footer */}
-            <div className="p-4 border-t border-gray-100 bg-gray-50/30">
+            <div className="p-4 bg-gray-50/30">
             </div>
           </div>
 
