@@ -1,9 +1,10 @@
 "use client";
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Menu, ShoppingCart, Bell, X, MapPin } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
+import { useNotifications } from '../contexts/NotificationContext';
 
 interface NavbarProps {
   onMenuClick: () => void;
@@ -12,6 +13,7 @@ interface NavbarProps {
 export default function Navbar({ onMenuClick }: NavbarProps) {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] = useState(false);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('momo');
   const [deliveryOption, setDeliveryOption] = useState('delivery');
@@ -25,6 +27,22 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
   const { getTotalItems } = useCart();
   const router = useRouter();
   const cartItemCount = getTotalItems();
+  const { unreadCount, notifications, markAsRead, markAllAsRead } = useNotifications();
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!(event.target as Element).closest('.dropdown-container')) {
+        setIsProfileDropdownOpen(false);
+        setIsNotificationDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const handleLogout = () => {
     // Clear authentication data - Note: localStorage not available in artifacts
@@ -172,9 +190,81 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
         {/* Right Side Icons */}
         <div className="flex items-center gap-2 sm:gap-3">
           {/* Notification Bell */}
-          <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-            <Bell size={20} className="text-gray-600" />
-          </button>
+          <div className="relative dropdown-container">
+            <button
+              onClick={() => setIsNotificationDropdownOpen(!isNotificationDropdownOpen)}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              aria-expanded={isNotificationDropdownOpen}
+              aria-haspopup="true"
+            >
+              <Bell size={20} className="text-gray-600" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  {unreadCount > 99 ? '99+' : unreadCount}
+                </span>
+              )}
+            </button>
+
+            {isNotificationDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                <div className="p-4 border-b border-gray-100">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold text-gray-900">Notifications</h3>
+                    {unreadCount > 0 && (
+                      <button
+                        onClick={markAllAsRead}
+                        className="text-xs text-emerald-600 hover:text-emerald-700 font-medium"
+                      >
+                        Mark all as read
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="max-h-96 overflow-y-auto">
+                  {notifications.length === 0 ? (
+                    <div className="p-4 text-center text-gray-500">
+                      <Bell size={24} className="mx-auto mb-2 opacity-50" />
+                      <p>No notifications</p>
+                    </div>
+                  ) : (
+                    notifications.slice(0, 5).map((notification) => (
+                      <div
+                        key={notification.id}
+                        className={`p-4 border-b border-gray-50 hover:bg-gray-50 cursor-pointer ${
+                          !notification.read ? 'bg-blue-50' : ''
+                        }`}
+                        onClick={() => markAsRead(notification.id)}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${
+                            notification.type === 'success' ? 'bg-green-500' :
+                            notification.type === 'warning' ? 'bg-yellow-500' :
+                            notification.type === 'error' ? 'bg-red-500' :
+                            'bg-blue-500'
+                          }`} />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-900 truncate">
+                              {notification.title}
+                            </p>
+                            <p className="text-xs text-gray-600 mt-1 line-clamp-2">
+                              {notification.message}
+                            </p>
+                            <p className="text-xs text-gray-400 mt-2">
+                              {new Date(notification.timestamp).toLocaleDateString()}
+                            </p>
+                          </div>
+                          {!notification.read && (
+                            <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0" />
+                          )}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* Cart and Profile */}
           <div className="flex items-center space-x-2 sm:space-x-4">
@@ -195,7 +285,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
             </div>
 
             {/* Profile Dropdown */}
-            <div className="relative">
+            <div className="relative dropdown-container">
               <button
                 onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
                 className="flex items-center justify-center w-8 h-8 rounded-full overflow-hidden bg-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2"

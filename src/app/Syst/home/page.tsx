@@ -302,7 +302,7 @@ export default function ProductsPage() {
         {/* Products Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {products.map((product) => (
-            <div key={product.id} className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+            <div key={product.id} className="bg-transparent rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
               <Image
                 src={product.image}
                 alt={product.name}
@@ -314,7 +314,7 @@ export default function ProductsPage() {
                 <div className="flex items-start justify-between mb-3">
                   <div>
                     <h3 className="font-medium text-gray-900">{product.name}</h3>
-                    <p className="text-gray-600 text-sm mt-1">{product.price}</p>
+                    <p className="text-gray-600 text-sm mt-1 font-bold">{product.price}</p>
                   </div>
                   <div className="flex items-center gap-1">
                     <Star size={16} className="text-yellow-400 fill-yellow-400" />

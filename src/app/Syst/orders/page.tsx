@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
+import { useNotifications } from '../../contexts/NotificationContext';
 
 export default function Orders() {
   const [isLoading, setIsLoading] = useState(true);
@@ -44,6 +45,8 @@ export default function Orders() {
     ? ordersData
     : ordersData.filter(order => order.status === selectedFilter);
 
+  const { addNotification } = useNotifications();
+
   const handleFilterSelect = (filter: string) => {
     setSelectedFilter(filter);
     setIsFilterOpen(false);
@@ -62,6 +65,15 @@ export default function Orders() {
         i === index ? { ...order, status: newStatus, statusColor: newStatusColor } : order
       )
     );
+
+    // Add notification for status change
+    const oldStatus = ordersData[index].status;
+    addNotification({
+      title: `Order Status Updated`,
+      message: `Order for ${ordersData[index].customer} changed from ${oldStatus} to ${newStatus}`,
+      type: newStatus === 'Confirmed' ? 'success' : newStatus === 'Cancelled' ? 'error' : 'info'
+    });
+
     setOpenStatusDropdown(null);
   };
 
