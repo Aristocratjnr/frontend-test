@@ -140,73 +140,76 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
 
       {/* Mobile Sidebar Overlay */}
       {isOpen && (
-        <aside
-          ref={sidebarRef}
-          className="lg:hidden fixed left-0 top-12 bottom-0 w-80 bg-white shadow-2xl z-50 border-r border-gray-200"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Navigation menu"
-        >
-          <div className="flex flex-col h-full">
-            {/* Header */}
-            <div className="p-6 border-b border-gray-100 bg-gray-50/50">
+        <>
+          {/* Backdrop */}
+          <div
+            className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+            onClick={onClose}
+            aria-label="Close sidebar"
+          />
+
+          <aside
+            ref={sidebarRef}
+            className="lg:hidden fixed left-0 top-0 bottom-0 w-80 bg-white shadow-2xl z-50 border-r border-gray-200"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Navigation menu"
+          >
+            <div className="flex flex-col h-full">
+              {/* Header with Close Button */}
+              <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-gray-50/50">
+                <div className="w-6"></div> {/* Spacer for centering */}
+                <button
+                  ref={closeButtonRef}
+                  onClick={onClose}
+                  className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                  aria-label="Close menu"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Menu Items */}
+              <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+                {menuItems.map((item) => {
+                  const isActive = pathname === item.href;
+                  const IconComponent = item.icon;
+
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      onClick={onClose}
+                      className={`group w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-left transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 ${
+                        isActive
+                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm'
+                          : 'text-gray-700 hover:bg-gray-50 hover:shadow-sm border border-transparent'
+                      }`}
+                    >
+                      <div className={`p-2 rounded-lg transition-all duration-200 ${
+                        isActive
+                          ? 'bg-emerald-100 text-emerald-600'
+                          : 'bg-gray-100 text-gray-600 group-hover:bg-emerald-50 group-hover:text-emerald-600'
+                      }`}>
+                        <IconComponent size={18} />
+                      </div>
+                      <span className="font-medium text-sm">{item.name}</span>
+                      {isActive && (
+                        <div className="ml-auto w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                      )}
+                    </Link>
+                  );
+                })}
+              </nav>
+
+              {/* Footer */}
+              <div className="p-4 bg-gray-50/30">
+              </div>
             </div>
-
-            {/* Menu Items */}
-            <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-              {menuItems.map((item, index) => {
-                const isActive = pathname === item.href;
-                const IconComponent = item.icon;
-
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    onClick={onClose}
-                    className={`group w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-left transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 ${
-                      isActive
-                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm'
-                        : 'text-gray-700 hover:bg-gray-50 hover:shadow-sm border border-transparent'
-                    }`}
-                    style={{
-                      animationDelay: `${index * 50}ms`,
-                      animation: 'slideInLeft 0.3s ease-out forwards'
-                    }}
-                  >
-                    <div className={`p-2 rounded-lg transition-all duration-200 ${
-                      isActive
-                        ? 'bg-emerald-100 text-emerald-600'
-                        : 'bg-gray-100 text-gray-600 group-hover:bg-emerald-50 group-hover:text-emerald-600'
-                    }`}>
-                      <IconComponent size={18} />
-                    </div>
-                    <span className="font-medium text-sm">{item.name}</span>
-                    {isActive && (
-                      <div className="ml-auto w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-                    )}
-                  </Link>
-                );
-              })}
-            </nav>
-
-            {/* Footer */}
-            <div className="p-4 bg-gray-50/30">
-            </div>
-          </div>
-
-          <style jsx>{`
-            @keyframes slideInLeft {
-              from {
-                opacity: 0;
-                transform: translateX(-20px);
-              }
-              to {
-                opacity: 1;
-                transform: translateX(0);
-              }
-            }
-          `}</style>
-        </aside>
+          </aside>
+        </>
       )}
     </>
   );

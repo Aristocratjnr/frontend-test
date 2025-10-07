@@ -38,12 +38,12 @@ export default function LoginForm() {
           className="object-cover"
           priority
         />
-       
+
       </div>
 
       {/* Right side - Login form */}
-      <div className="flex w-full md:w-1/2 lg:w-1/2 items-center justify-center bg-[#fafafa] h-1/2 md:h-full md:ml-0 px-4 sm:px-6">
-        <div className="w-full max-w-sm mx-auto">
+      <div className="flex w-full md:w-1/2 lg:w-1/2 items-start justify-center bg-[#fafafa] h-1/2 md:h-full md:ml-0 pt-8 md:pt-0 md:items-center">
+        <div className="w-full max-w-sm px-4 sm:px-6 md:px-8">
           <h2 className="mt-2 mb-8 text-xl sm:text-2xl md:text-3xl font-semibold text-black text-center lg:text-left">
             Log in to Syst
           </h2>
@@ -104,7 +104,7 @@ export default function LoginForm() {
             <button
               type="submit"
               disabled={isLoading || !hasContent}
-              className={`mt-4 w-full rounded-full py-2 sm:py-3 text-sm sm:text-base font-medium text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+              className={`mt-4 w-full max-w-md mx-auto rounded-full py-2 sm:py-3 text-sm sm:text-base font-medium text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                 isLoading || !hasContent
                   ? 'bg-gray-400 cursor-not-allowed'
                   : hasContent
