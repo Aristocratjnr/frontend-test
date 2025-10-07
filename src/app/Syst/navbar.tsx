@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { Menu, ShoppingCart, Bell, X, ArrowLeft, MapPin } from 'lucide-react';
+import { Menu, ShoppingCart, Bell, X, MapPin } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 
 interface NavbarProps {
@@ -21,21 +21,14 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
     momoNumber: '+233',
     deliveryLocation: ''
   });
+  const [isMomoSameAsPhone, setIsMomoSameAsPhone] = useState(true);
   const { getTotalItems } = useCart();
   const router = useRouter();
   const cartItemCount = getTotalItems();
 
   const handleLogout = () => {
-    // Clear authentication data
-    localStorage.removeItem('authToken');
-    sessionStorage.clear();
-
-    // Clear any cookies if using cookie-based auth
-    document.cookie.split(";").forEach((c) => {
-      document.cookie = c
-        .replace(/^ +/, "")
-        .replace(/=.*/, "=;expires=" + new Date().toISOString() + ";path=/");
-    });
+    // Clear authentication data - Note: localStorage not available in artifacts
+    // In production, this would clear auth tokens
 
     // Close dropdown
     setIsProfileDropdownOpen(false);
@@ -45,17 +38,46 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
   };
 
   const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
     if (searchQuery.trim()) {
-      // Navigate to search results page with query parameter
       router.push(`/Syst/search?q=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
 
+  const formatPhoneNumber = (value: string) => {
+    // Remove all non-digit characters
+    const digits = value.replace(/\D/g, '');
+
+    // Handle Ghanaian phone number format: +233 XX XXX XXXX
+    if (digits.length <= 3) {
+      return digits.startsWith('233') ? `+${digits}` : `+233${digits}`;
+    } else if (digits.length <= 5) {
+      return `+${digits.slice(0, 3)} ${digits.slice(3)}`;
+    } else if (digits.length <= 8) {
+      return `+${digits.slice(0, 3)} ${digits.slice(3, 5)} ${digits.slice(5)}`;
+    } else {
+      return `+${digits.slice(0, 3)} ${digits.slice(3, 5)} ${digits.slice(5, 8)} ${digits.slice(8, 12)}`;
+    }
+  };
+
+  const handlePhoneNumberChange = (field: 'phoneNumber' | 'momoNumber') => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhoneNumber(e.target.value);
+    setPaymentData({ ...paymentData, [field]: formatted });
+  };
+
+  const validateGhanaPhoneNumber = (phoneNumber: string): boolean => {
+    // Ghana phone number pattern: +233 XX XXX XXXX
+    const ghanaPhoneRegex = /^\+233\s[2-9][0-9]\s[0-9]{3}\s[0-9]{4}$/;
+    return ghanaPhoneRegex.test(phoneNumber);
+  };
+
   const handlePayment = () => {
-    // Validate form
     if (!paymentData.name || !paymentData.phoneNumber) {
       alert('Please fill in all required fields');
+      return;
+    }
+
+    if (!validateGhanaPhoneNumber(paymentData.phoneNumber)) {
+      alert('Please enter a valid Ghanaian phone number (+233 XX XXX XXXX)');
       return;
     }
 
@@ -64,16 +86,19 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
       return;
     }
 
+    if (paymentMethod === 'momo' && !validateGhanaPhoneNumber(paymentData.momoNumber)) {
+      alert('Please enter a valid Ghanaian phone number for Momo (+233 XX XXX XXXX)');
+      return;
+    }
+
     if (deliveryOption === 'delivery' && !paymentData.deliveryLocation) {
       alert('Please enter your delivery location');
       return;
     }
 
-    // Process payment
     alert('Payment processed successfully!');
     setIsPaymentModalOpen(false);
-    
-    // Reset form
+
     setPaymentData({
       name: '',
       phoneNumber: '+233',
@@ -146,19 +171,6 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
 
         {/* Right Side Icons */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Shopping Bag with Count */}
-          <button 
-            onClick={() => setIsPaymentModalOpen(true)}
-            className="bg-emerald-400 text-white px-2 sm:px-3 py-2 rounded-lg flex items-center gap-1 sm:gap-2 hover:bg-emerald-500 transition-colors"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="sm:w-[18px] sm:h-[18px]">
-              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-              <line x1="3" y1="6" x2="21" y2="6"/>
-              <path d="M16 10a4 4 0 0 1-8 0"/>
-            </svg>
-            <span className="font-semibold text-xs sm:text-sm">0</span>
-          </button>
-
           {/* Notification Bell */}
           <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
             <Bell size={20} className="text-gray-600" />
@@ -169,7 +181,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
             {/* Cart Icon */}
             <div className="relative">
               <button
-              onClick={() => setIsPaymentModalOpen(true)}
+                onClick={() => setIsPaymentModalOpen(true)}
                 className="p-2 text-gray-600 hover:text-gray-900 relative"
                 aria-label="Shopping cart"
               >
@@ -239,45 +251,44 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
           <div className="fixed right-0 top-0 h-screen w-full sm:w-[500px] bg-white shadow-2xl z-[110] overflow-y-auto flex flex-col">
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setIsPaymentModalOpen(false)}
-                  className="text-gray-600 hover:text-gray-800 transition-colors"
-                  aria-label="Back"
-                >
-                  <ArrowLeft size={20} />
-                </button>
-                <h2 className="text-lg font-semibold text-gray-900">Payment</h2>
-              </div>
+              <h2 className="text-base font-semibold text-gray-900">Payment</h2>
+              <button
+                onClick={() => setIsPaymentModalOpen(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors text-sm flex items-center gap-1"
+                aria-label="Close"
+              >
+                <X size={16} />
+                <span>Close</span>
+              </button>
             </div>
 
             {/* Content */}
             <div className="flex-1 p-6 space-y-6">
               {/* Payment Details */}
               <div>
-                <h3 className="text-base font-semibold text-gray-900 mb-4">Payment Details</h3>
+                <h3 className="text-sm font-semibold text-gray-900 mb-4">Payment Details</h3>
                 
                 {/* Name */}
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs text-gray-600 mb-2">
                     Name*
                   </label>
                   <input
                     type="text"
-                    placeholder="Kwame Shirley"
+                    placeholder="Kwame Dartey"
                     value={paymentData.name}
                     onChange={(e) => setPaymentData({ ...paymentData, name: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent text-gray-900 placeholder:text-gray-400"
+                    className="w-full px-3 py-2 bg-gray-50 border-0 rounded-md focus:outline-none focus:ring-1 focus:ring-emerald-400 text-sm text-gray-900 placeholder:text-gray-400"
                     required
                   />
                 </div>
 
                 {/* Phone Number */}
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs text-gray-600 mb-2">
                     Phone number*
                   </label>
-                  <div className="flex items-center gap-2 border border-gray-300 rounded-lg px-4 py-2.5 focus-within:ring-2 focus-within:ring-emerald-400 focus-within:border-transparent">
+                  <div className="flex items-center gap-2 bg-gray-50 rounded-md px-3 py-2">
                     <Image
                       src="/images/gh-flag.png"
                       alt="Ghana"
@@ -285,11 +296,15 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
                       height={15}
                       className="flex-shrink-0"
                     />
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="text-gray-400">
+                      <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
                     <input
                       type="tel"
+                      placeholder="+233 20 123 4567"
                       value={paymentData.phoneNumber}
-                      onChange={(e) => setPaymentData({ ...paymentData, phoneNumber: e.target.value })}
-                      className="flex-1 outline-none text-gray-900"
+                      onChange={handlePhoneNumberChange('phoneNumber')}
+                      className="flex-1 bg-transparent outline-none text-sm text-gray-900"
                       required
                     />
                   </div>
@@ -298,9 +313,9 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
 
               {/* Select Payment Method */}
               <div>
-                <h3 className="text-base font-semibold text-gray-900 mb-4">Select Payment method</h3>
+                <h3 className="text-sm font-semibold text-gray-900 mb-4">Select Payment method</h3>
                 
-                <div className="space-y-3">
+                <div className="flex gap-6 items-center">
                   {/* Momo */}
                   <label className="flex items-center gap-3 cursor-pointer">
                     <input
@@ -309,7 +324,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
                       value="momo"
                       checked={paymentMethod === 'momo'}
                       onChange={(e) => setPaymentMethod(e.target.value)}
-                      className="w-4 h-4 text-emerald-400 border-gray-300 focus:ring-emerald-400"
+                      className="w-4 h-4 text-[#069B5C] border-gray-300 focus:ring-[#069B5C]"
                     />
                     <span className="text-sm text-gray-900">Momo</span>
                   </label>
@@ -322,7 +337,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
                       value="card"
                       checked={paymentMethod === 'card'}
                       onChange={(e) => setPaymentMethod(e.target.value)}
-                      className="w-4 h-4 text-emerald-400 border-gray-300 focus:ring-emerald-400"
+                      className="w-4 h-4 text-[#069B5C] border-gray-300 focus:ring-[#069B5C]"
                     />
                     <span className="text-sm text-gray-900">Card</span>
                   </label>
@@ -335,7 +350,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
                       value="cash"
                       checked={paymentMethod === 'cash'}
                       onChange={(e) => setPaymentMethod(e.target.value)}
-                      className="w-4 h-4 text-emerald-400 border-gray-300 focus:ring-emerald-400"
+                      className="w-4 h-4 text-[#069B5C] border-gray-300 focus:ring-[#069B5C]"
                     />
                     <span className="text-sm text-gray-900">Cash on delivery</span>
                   </label>
@@ -344,42 +359,67 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
                 {/* Momo Number Input */}
                 {paymentMethod === 'momo' && (
                   <div className="mt-4">
-                    <p className="text-xs text-gray-600 mb-3">
-                      ℹ️ Is your Momo number the same as your phone number?
-                    </p>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Phone number*
-                    </label>
-                    <div className="flex items-center gap-2 border border-gray-300 rounded-lg px-4 py-2.5 focus-within:ring-2 focus-within:ring-emerald-400 focus-within:border-transparent">
-                      <Image
-                        src="/images/gh-flag.png"
-                        alt="Ghana"
-                        width={20}
-                        height={15}
-                        className="flex-shrink-0"
-                      />
-                      <input
-                        type="tel"
-                        value={paymentData.momoNumber}
-                        onChange={(e) => setPaymentData({ ...paymentData, momoNumber: e.target.value })}
-                        className="flex-1 outline-none text-gray-900"
-                        required
-                      />
+                    <p className="text-xs text-gray-600 mb-3">Is your Momo number the same as your phone number?</p>
+
+                    <div className="flex gap-6 items-center mb-4">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          name="momoSameAsPhone"
+                          checked={isMomoSameAsPhone === true}
+                          onChange={(e) => {
+                            setIsMomoSameAsPhone(e.target.checked);
+                            if (e.target.checked) {
+                              setPaymentData({ ...paymentData, momoNumber: paymentData.phoneNumber });
+                            }
+                          }}
+                          className="w-4 h-4 text-[#069B5C] border-gray-300 focus:ring-[#069B5C]"
+                        />
+                        <span className="text-sm text-gray-900">Same as phone number</span>
+                      </label>
                     </div>
+
+                    {!isMomoSameAsPhone && (
+                      <div>
+                        <label className="block text-xs text-gray-600 mb-2">
+                          Phone number*
+                        </label>
+                        <div className="flex items-center gap-2 bg-white rounded-md px-3 py-2 border border-gray-200">
+                          <Image
+                            src="/images/gh-flag.png"
+                            alt="Ghana"
+                            width={20}
+                            height={15}
+                            className="flex-shrink-0"
+                          />
+                          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="text-gray-400">
+                            <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          <input
+                            type="tel"
+                            placeholder="+233 20 123 4567"
+                            value={paymentData.momoNumber}
+                            onChange={handlePhoneNumberChange('momoNumber')}
+                            className="flex-1 bg-transparent outline-none text-sm text-gray-900"
+                            required
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
 
               {/* Delivery Details */}
               <div>
-                <h3 className="text-base font-semibold text-gray-900 mb-4">Delivery Details</h3>
+                <h3 className="text-sm font-semibold text-gray-900 mb-4">Delivery Details</h3>
                 
-                <p className="text-sm text-gray-700 mb-3">Select delivery option</p>
+                <p className="text-xs text-gray-600 mb-3">Select delivery option</p>
                 
                 <div className="flex gap-3 mb-4">
                   <button
                     onClick={() => setDeliveryOption('delivery')}
-                    className={`flex-1 px-4 py-2.5 rounded-lg font-medium text-sm transition-colors ${
+                    className={`flex-1 px-4 py-2 rounded-md font-medium text-sm transition-colors ${
                       deliveryOption === 'delivery'
                         ? 'bg-emerald-400 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -389,7 +429,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
                   </button>
                   <button
                     onClick={() => setDeliveryOption('pickup')}
-                    className={`flex-1 px-4 py-2.5 rounded-lg font-medium text-sm transition-colors ${
+                    className={`flex-1 px-4 py-2 rounded-md font-medium text-sm transition-colors ${
                       deliveryOption === 'pickup'
                         ? 'bg-emerald-400 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -401,8 +441,8 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
 
                 {/* Delivery Location */}
                 {deliveryOption === 'delivery' && (
-                  <div>
-                    <label className="block text-sm text-gray-700 mb-2">
+                  <div className="bg-[#FFDEB642] rounded-md p-3">
+                    <label className="block text-xs text-gray-600 mb-2">
                       Delivery location
                     </label>
                     <div className="relative">
@@ -411,15 +451,16 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
                         placeholder="Circle"
                         value={paymentData.deliveryLocation}
                         onChange={(e) => setPaymentData({ ...paymentData, deliveryLocation: e.target.value })}
-                        className="w-full px-4 py-2.5 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent text-gray-900 placeholder:text-gray-400"
+                        className="w-full px-3 py-2 pr-20 bg-[#FFDEB642] border-0 rounded-md focus:outline-none focus:ring-1 focus:ring-emerald-400 text-sm text-gray-900 placeholder:text-gray-900"
                         required
                       />
                       <button
                         type="button"
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-emerald-400 hover:text-emerald-500"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 flex items-center gap-1"
                         aria-label="Change location"
                       >
-                        <MapPin size={18} />
+                        <span className="text-xs">Change</span>
+                        <MapPin size={14} />
                       </button>
                     </div>
                   </div>
@@ -431,7 +472,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
             <div className="border-t border-gray-200 p-6 bg-white">
               <button
                 onClick={handlePayment}
-                className="w-full py-3.5 bg-emerald-400 text-white rounded-lg hover:bg-emerald-500 font-semibold transition-colors text-base"
+                className="w-full py-3 bg-emerald-400 text-white rounded-full hover:bg-emerald-500 font-medium transition-colors text-sm"
               >
                 Continue to Pay
               </button>
